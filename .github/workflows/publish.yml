@@ -50,8 +50,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/extractinator:${{ steps.meta.outputs.tag }}
-            ${{ steps.meta.outputs.latest_tag && format('ghcr.io/{0}/extractinator:latest', github.repository) }}
+            ghcr.io/${{ github.repository.toLowerCase() }}/extractinator:${{ steps.meta.outputs.tag }}
+            ${{ steps.meta.outputs.latest_tag && format('ghcr.io/{0}/extractinator:latest', github.repository.toLowerCase()) }}
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
