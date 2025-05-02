@@ -76,6 +76,7 @@ app.get('/api/archives/stream', (req, res) => {
 });
 
 import chokidar from 'chokidar';
+console.log(`[index.js] Initializing chokidar watcher on:`, config.inputDir);
 const watcher = chokidar.watch(config.inputDir, { ignoreInitial: false });
 function notifyArchiveClients() {
   scanInputDir().then(files => {
@@ -83,7 +84,13 @@ function notifyArchiveClients() {
     for (const client of archiveClients) client.write(`data: ${data}\n\n`);
   });
 }
-watcher.on('add', notifyArchiveClients).on('unlink', notifyArchiveClients);
+watcher.on('add', file => {
+  console.log(`[index.js] chokidar 'add' event for file:`, file);
+  notifyArchiveClients();
+}).on('unlink', file => {
+  console.log(`[index.js] chokidar 'unlink' event for file:`, file);
+  notifyArchiveClients();
+});
 
 
 // Trigger processing of queued jobs

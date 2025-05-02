@@ -27,7 +27,10 @@ class Extractor extends EventEmitter {
     if (!config.inputDir) return;
     if (this.watcher) this.watcher.close();
     this.watcher = chokidar.watch(config.inputDir, { ignoreInitial: true });
-    this.watcher.on('add', file => this.handleNewArchive(file));
+    this.watcher.on('add', file => {
+      console.log(`[extractor.js] chokidar 'add' event for file:`, file);
+      this.handleNewArchive(file);
+    });
   }
 
   async handleNewArchive(file) {
