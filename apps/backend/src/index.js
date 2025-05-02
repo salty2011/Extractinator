@@ -2,7 +2,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { ensureConfig } from './config.js';
+import { ensureConfig, getConfig } from './config.js';
 import { verifyCredentials, issueJWT } from './auth.js';
 import settingsRouter from './settings.js';
 import extractor from './extractor.js';
@@ -12,6 +12,8 @@ dotenv.config();
 
 // Ensure config and logs directories exist on startup
 await ensureConfig();
+
+const config = await getConfig();
 
 const app = express();
 app.use(cors());
@@ -74,7 +76,7 @@ app.get('/api/archives/stream', (req, res) => {
 });
 
 import chokidar from 'chokidar';
-const watcher = chokidar.watch(process.env.INPUT_DIR || '/extraction/input', { ignoreInitial: true });
+const watcher = chokidar.watch(config.inputDir, { ignoreInitial: false });
 function notifyArchiveClients() {
   scanInputDir().then(files => {
     const data = JSON.stringify({ archives: files.map(f => ({ file: f })) });
