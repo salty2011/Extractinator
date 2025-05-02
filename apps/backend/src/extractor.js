@@ -34,7 +34,10 @@ class Extractor extends EventEmitter {
   }
 
   async handleNewArchive(file) {
-    if (!SUPPORTED_EXTS.some(ext => file.endsWith(ext))) return;
+    const lower = file.toLowerCase();
+    // Only allow supported extensions, but explicitly ignore .rXX and .sfv files
+    if (/\.r\d{2}$/i.test(lower) || lower.endsWith('.sfv')) return;
+    if (!SUPPORTED_EXTS.some(ext => lower.endsWith(ext))) return;
     const jobId = uuidv4();
     const config = await getConfig();
     const archiveName = path.basename(file);

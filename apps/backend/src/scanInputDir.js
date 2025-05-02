@@ -11,7 +11,12 @@ export async function scanInputDir() {
   try {
     const files = await fs.readdir(config.inputDir);
     return files
-      .filter(f => SUPPORTED_EXTS.some(ext => f.toLowerCase().endsWith(ext)))
+      .filter(f => {
+        const lower = f.toLowerCase();
+        // Only allow supported extensions, but explicitly ignore .rXX and .sfv files
+        if (/\.r\d{2}$/i.test(lower) || lower.endsWith('.sfv')) return false;
+        return SUPPORTED_EXTS.some(ext => lower.endsWith(ext));
+      })
       .map(f => path.join(config.inputDir, f));
   } catch {
     return [];
